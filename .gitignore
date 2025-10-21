@@ -1,0 +1,4 @@
+.dist
+.venv
+hello.pdf
+__pycache__
