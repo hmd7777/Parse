@@ -6,20 +6,20 @@
     <h2>Mobile phone activity</h2>
     <div class="insights__tools">
       <button class="icon-button" type="button" aria-label="Edit">
-        <img src="../static/images/icon-edit.svg" alt="" class="icon-button__icon" />
+        <img src="{{ url_for('static', path='images/icon-edit.svg') }}" alt="" class="icon-button__icon" />
       </button>
       <button class="icon-button" type="button" aria-label="Create new folder">
         <img
-          src="../static/images/icon-folder-plus.svg"
+          src="{{ url_for('static', path='images/icon-folder-plus.svg') }}"
           alt=""
           class="icon-button__icon"
         />
       </button>
       <button class="icon-button" type="button" aria-label="History">
-        <img src="../static/images/icon-history.svg" alt="" class="icon-button__icon" />
+        <img src="{{ url_for('static', path='images/icon-history.svg') }}" alt="" class="icon-button__icon" />
       </button>
       <button class="icon-button" type="button" aria-label="Refresh">
-        <img src="../static/images/icon-refresh.svg" alt="" class="icon-button__icon" />
+        <img src="{{ url_for('static', path='images/icon-refresh.svg') }}" alt="" class="icon-button__icon" />
       </button>
     </div>
   </header>

@@ -8,8 +8,8 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500&display=swap"
     />
-    <link rel="stylesheet" href="../static/css/style.css" />
-    <link rel="stylesheet" href="../static/css/index.css" />
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', path='css/index.css') }}" />
   </head>
   <body>
     <div class="app-shell">
@@ -17,12 +17,12 @@
         <div class="brand">
           <div class="brand__icon">
             <img
-              src="../static/images/logo-glyph-light.svg"
+              src="{{ url_for('static', path='images/logo-glyph-light.svg') }}"
               alt="Parse logo accent"
               class="brand__glyph"
             />
             <img
-              src="../static/images/logo-glyph-dark.svg"
+              src="{{ url_for('static', path='images/logo-glyph-dark.svg') }}"
               alt=""
               class="brand__glyph brand__glyph--overlay"
             />
@@ -32,7 +32,7 @@
         <div class="user-controls">
           <button class="icon-button" type="button" aria-label="Toggle menu">
             <img
-              src="../static/images/icon-chevron.svg"
+              src="{{ url_for('static', path='images/icon-chevron.svg') }}"
               alt=""
               class="icon-button__icon"
             />
@@ -46,7 +46,7 @@
           <header class="panel__header">
             <h1>Analyse with Parse</h1>
             <img
-              src="../static/images/icon-dock-right.svg"
+              src="{{ url_for('static', path='images/icon-dock-right.svg') }}"
               alt=""
               class="panel__header-icon"
             />
@@ -71,12 +71,12 @@
                 <div class="card__brand">
                   <div class="card__brand-icon">
                     <img
-                      src="../static/images/logo-glyph-light-sm.svg"
+                      src="{{ url_for('static', path='images/logo-glyph-light-sm.svg') }}"
                       alt=""
                       class="card__brand-glyph"
                     />
                     <img
-                      src="../static/images/logo-glyph-dark-sm.svg"
+                      src="{{ url_for('static', path='images/logo-glyph-dark-sm.svg') }}"
                       alt=""
                       class="card__brand-glyph card__brand-glyph--overlay"
                     />
@@ -96,12 +96,12 @@
                 <div class="card__brand">
                   <div class="card__brand-icon">
                     <img
-                      src="../static/images/logo-glyph-light-sm.svg"
+                      src="{{ url_for('static', path='images/logo-glyph-light-sm.svg') }}"
                       alt=""
                       class="card__brand-glyph"
                     />
                     <img
-                      src="../static/images/logo-glyph-dark-sm.svg"
+                      src="{{ url_for('static', path='images/logo-glyph-dark-sm.svg') }}"
                       alt=""
                       class="card__brand-glyph card__brand-glyph--overlay"
                     />
@@ -124,34 +124,13 @@
               <button type="button" class="composer__action">
                 <span class="composer__icon-circle">
                   <img
-                    src="../static/images/icon-attach.svg"
+                    src="{{ url_for('static', path='images/icon-attach.svg') }}"
                     alt=""
                     class="composer__icon"
                   />
                 </span>
                 <span>Attach</span>
               </button>
-              <div class="composer__tag">
-                <span class="composer__icon-circle">
-                  <img
-                    src="../static/images/icon-filecities.svg"
-                    alt=""
-                    class="composer__icon"
-                  />
-                </span>
-                <span class="composer__tag-label">FileCities</span>
-                <button
-                  type="button"
-                  class="composer__tag-remove"
-                  aria-label="Remove attachment"
-                >
-                  <img
-                    src="../static/images/icon-close.svg"
-                    alt=""
-                    class="composer__icon"
-                  />
-                </button>
-              </div>
             </div>
           </footer>
         </section>
