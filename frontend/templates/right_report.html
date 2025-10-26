@@ -76,41 +76,26 @@
       </div>
 
       <section class="insight-card__body">
-        <h4>Overview and City-by-City Comparison</h4>
+        {% if file_name %}
+        <h4>Source: {{ file_name }}</h4>
+        {% endif %}
         <p>
-          The bar chart titled “Hourly phone calls, SMS and Internet communication
-          of an entire city (Monthly)” presents the aggregate communication
-          activity—through phone calls, SMS, and internet usage—across ten global
-          cities. While the chart does not explicitly state whether the figures
-          represent hours or total data volume, the unit seems to be in the
-          millions, likely referring to the cumulative number of communication
-          events or hours per month. For the purpose of this analysis, we will
-          treat these as indicators of overall communication volume, a reliable
-          proxy for mobile phone usage. Focusing on the four cities of
-          interest—London, New York, Paris, and Madrid—we observe clear variances
-          in communication behavior. New York leads this subgroup with
-          approximately 2 million monthly communication events, closely followed
-          by Paris at slightly under 2 million. London ranks next at around 1.8
-          million, while Madrid lags behind at approximately 1.25 million. This
-          variation may reflect differing levels of urban digital infrastructure,
-          population density, mobile penetration rates, and cultural preferences
-          in digital communication across these cities. New York’s dominant
-          position suggests a high degree of digital connectivity and a possibly
-          stronger reliance on mobile technology in daily life.
+          {% if preview_snippet %}
+            {{ preview_snippet }}
+          {% else %}
+            The bar chart titled “Hourly phone calls, SMS and Internet communication
+            of an entire city (Monthly)” presents the aggregate communication
+            activity—through phone calls, SMS, and internet usage—across ten global
+            cities.
+          {% endif %}
         </p>
       </section>
 
       <section class="insight-card__body">
-        <h4>The Rise and Impact of Exchange-Traded Funds (ETFs) in Global Finance</h4>
+        <h4>Next Steps</h4>
         <p>
-          Over the last two decades, Exchange-Traded Funds (ETFs) have emerged as
-          one of the most transformative innovations in the global investment
-          landscape. Combining the diversification benefits of mutual funds with
-          the liquidity and flexibility of stock trading, ETFs have reshaped
-          portfolio construction, market access, and investor behavior. As of
-          2024, the global ETF market stands as a $11.8 trillion industry, growing
-          at a compounded annual growth rate (CAGR) of 17.3% since 2010, when the
-          market was valued at approximately $1.3 trillion.
+          Upload additional documents or refresh to update the insights shown in
+          this workspace.
         </p>
       </section>
     </article>

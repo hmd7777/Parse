@@ -55,15 +55,7 @@
           <div class="conversation__scroll">
             <article class="card card--request">
               <div class="card__avatar card__avatar--violet">AD</div>
-              <p class="card__body">
-                Review the provided document to determine the average number of
-                hours people in Madrid, London, New York, Paris, Milan,
-                Barcelona, Tokyo, Istanbul, Seoul and Los Angeles typically
-                spend on their phones. Then, create line charts to visualise
-                this data, accompanied by explanatory text describing the trends
-                shown in the charts. Finally, present both the charts and the
-                accompanying text using dark mode background colours.
-              </p>
+              <p class="card__body">{{ user_prompt }}</p>
             </article>
 
             <article class="card card--response">
@@ -120,8 +112,13 @@
             <span class="composer__placeholder"
               >Ask Parse for more insights...</span
             >
-            <div class="composer__actions">
-              <button type="button" class="composer__action">
+            <form
+              class="composer__actions"
+              action="{{ url_for('upload_file_view') }}"
+              method="post"
+              enctype="multipart/form-data"
+            >
+              <label class="composer__action composer__action--upload">
                 <span class="composer__icon-circle">
                   <img
                     src="{{ url_for('static', path='images/icon-attach.svg') }}"
@@ -130,8 +127,18 @@
                   />
                 </span>
                 <span>Attach</span>
-              </button>
-            </div>
+                <input
+                  class="composer__file-input"
+                  type="file"
+                  name="file"
+                  accept=".pdf,.csv,.xlsx,.xls"
+                  onchange="this.form.submit()"
+                />
+              </label>
+            </form>
+            {% if file_name %}
+            <p class="composer__status">Uploaded: {{ file_name }}</p>
+            {% endif %}
           </footer>
         </section>
 

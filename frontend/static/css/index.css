@@ -323,6 +323,14 @@ button {
   color: #f3f3f3;
 }
 
+.composer__action--upload {
+  cursor: pointer;
+}
+
+.composer__action--upload:hover .composer__icon-circle {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 .composer__icon-circle {
   width: 32px;
   height: 32px;
@@ -338,33 +346,14 @@ button {
   height: 16px;
 }
 
-.composer__tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 12px 6px 6px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.07);
+.composer__file-input {
+  display: none;
 }
 
-.composer__tag-label {
-  font-size: 13px;
-  color: #f3f3f3;
-}
-
-.composer__tag-remove {
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s ease;
-}
-
-.composer__tag-remove:hover {
-  background: rgba(255, 255, 255, 0.15);
+.composer__status {
+  margin: 0;
+  font-size: 12px;
+  color: #9c9c9c;
 }
 
 .insights {
@@ -538,6 +527,13 @@ button {
   font-size: 14px;
   line-height: 1.6;
   color: #c9c9c9;
+}
+
+.insight-preview {
+  margin: 0;
+  font-size: 14px;
+  color: #bdbdbd;
+  line-height: 1.5;
 }
 
 .insights--home {
