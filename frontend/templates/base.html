@@ -112,13 +112,8 @@
             <span class="composer__placeholder"
               >Ask Parse for more insights...</span
             >
-            <form
-              class="composer__actions"
-              action="{{ url_for('upload_file_view') }}"
-              method="post"
-              enctype="multipart/form-data"
-            >
-              <label class="composer__action composer__action--upload">
+            <form class="composer__actions" id="upload-form">
+              <label class="composer__action composer__action--upload" id="upload-trigger">
                 <span class="composer__icon-circle">
                   <img
                     src="{{ url_for('static', path='images/icon-attach.svg') }}"
@@ -128,22 +123,84 @@
                 </span>
                 <span>Attach</span>
                 <input
+                  id="composer-file-input"
                   class="composer__file-input"
                   type="file"
                   name="file"
                   accept=".pdf,.csv,.xlsx,.xls"
-                  onchange="this.form.submit()"
                 />
               </label>
             </form>
-            {% if file_name %}
-            <p class="composer__status">Uploaded: {{ file_name }}</p>
-            {% endif %}
+            <p class="composer__status" id="upload-status">
+              {% if file_name %}Uploaded: {{ file_name }}{% endif %}
+            </p>
           </footer>
         </section>
 
         {% block right_panel %}{% endblock %}
       </main>
     </div>
+    <script>
+      (() => {
+        const form = document.getElementById("upload-form");
+        const fileInput = document.getElementById("composer-file-input");
+        const statusEl = document.getElementById("upload-status");
+        if (!form || !fileInput || !statusEl) {
+          return;
+        }
+
+        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        async function pollJob(jobId) {
+          while (true) {
+            const resp = await fetch(`/jobs/${jobId}`);
+            if (!resp.ok) {
+              throw new Error("Unable to fetch job status");
+            }
+            const payload = await resp.json();
+            if (payload.status === "SUCCESS") {
+              return payload;
+            }
+            if (payload.status === "FAILURE") {
+              throw new Error(payload.error || "Job failed");
+            }
+            await sleep(1500);
+          }
+        }
+
+        form.addEventListener("change", async () => {
+          const file = fileInput.files[0];
+          if (!file) {
+            return;
+          }
+          const data = new FormData();
+          data.append("file", file);
+          statusEl.textContent = "Uploading…";
+          fileInput.disabled = true;
+          try {
+            const resp = await fetch("/files/upload-async", {
+              method: "POST",
+              body: data,
+            });
+            if (!resp.ok) {
+              const errText = await resp.text();
+              throw new Error(errText || "Upload failed");
+            }
+            const job = await resp.json();
+            statusEl.textContent = "Processing…";
+            const result = await pollJob(job.id);
+            statusEl.textContent = "Completed!";
+            if (result.file_id) {
+              window.location.href = `/?file_id=${result.file_id}`;
+            }
+          } catch (error) {
+            statusEl.textContent = `Error: ${error.message}`;
+          } finally {
+            fileInput.disabled = false;
+            fileInput.value = "";
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

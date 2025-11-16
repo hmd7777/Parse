@@ -12,6 +12,7 @@ class FileInfo(BaseModel):
 
 class JobInfo(BaseModel):
     id: str
+    file_id: str | None = None
     file_name: str
     mime: str
     status: str

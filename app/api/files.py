@@ -95,7 +95,7 @@ async def upload_file_async(file: UploadFile = File(...)) -> JobInfo:
 
     Returns a light-weight job descriptor that can be polled via /jobs/{id}.
     """
-    fid, dest, mime, _ = await _save_uploaded_file(file)
+    fid, dest, mime, size = await _save_uploaded_file(file)
 
     # Choose the appropriate Celery task
     if mime == "application/pdf":
@@ -108,11 +108,22 @@ async def upload_file_async(file: UploadFile = File(...)) -> JobInfo:
         )
 
     now = datetime.utcnow()
-    job = Job(id=task.id, file_name=file.filename, mime=mime, created_at=now, updated_at=now, status="PENDING")
+    job = Job(
+        id=task.id,
+        file_id=fid,
+        file_name=file.filename,
+        mime=mime,
+        file_path=dest,
+        size=size,
+        created_at=now,
+        updated_at=now,
+        status="PENDING",
+    )
     JOBS[job.id] = job
 
     return JobInfo(
         id=job.id,
+        file_id=job.file_id,
         file_name=job.file_name,
         mime=job.mime,
         status=job.status,

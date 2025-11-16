@@ -4,7 +4,7 @@ from celery.result import AsyncResult
 from fastapi import APIRouter, HTTPException
 
 from app.celery_app import celery_app
-from app.models import JOBS, Job
+from app.models import FILES, JOBS, Job, StoredFile
 from app.schemas import JobInfo
 
 
@@ -16,7 +16,8 @@ def _sync_job_from_celery(job: Job, async_result: AsyncResult) -> Job:
     job.updated_at = datetime.utcnow()
 
     if async_result.successful():
-        job.preview = str(async_result.result)
+        result = async_result.result
+        job.preview = str(result) if result is not None else ""
         job.error = None
     elif async_result.failed():
         job.error = str(async_result.result)
@@ -33,8 +34,19 @@ def get_job(job_id: str) -> JobInfo:
     async_result = AsyncResult(job_id, app=celery_app)
     job = _sync_job_from_celery(job, async_result)
 
+    if job.status == "SUCCESS" and job.preview and job.file_id not in FILES:
+        FILES[job.file_id] = StoredFile(
+            id=job.file_id,
+            name=job.file_name,
+            mime=job.mime,
+            size=job.size,
+            path=job.file_path,
+            preview=job.preview,
+        )
+
     return JobInfo(
         id=job.id,
+        file_id=job.file_id,
         file_name=job.file_name,
         mime=job.mime,
         status=job.status,

@@ -26,13 +26,16 @@ class Job:
     """
     Lightweight in-memory representation of a background parsing job.
 
-    The actual task execution and result are handled by Celery; this structure
-    simply tracks metadata we care about on the API side.
+    The job retains enough metadata so the API process can produce a StoredFile
+    entry once the Celery task finishes.
     """
 
     id: str  # Celery task id
+    file_id: str
     file_name: str
     mime: str
+    file_path: Path
+    size: int
     created_at: datetime
     updated_at: datetime
     status: str = "PENDING"
