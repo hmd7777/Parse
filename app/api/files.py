@@ -1,10 +1,13 @@
 # app/api/files.py
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from pathlib import Path
-from app.models import FILES, StoredFile, new_file_id, UPLOAD_DIR
-from app.schemas import FileInfo
+from datetime import datetime
 
-# NEW: import parsers
+from app.celery_app import celery_app
+from app.models import FILES, JOBS, Job, StoredFile, new_file_id, UPLOAD_DIR
+from app.schemas import FileInfo, JobInfo
+
+# parsers for the synchronous upload; Celery tasks also reuse them
 from app.parsers.pdf import parse_pdf
 from app.parsers.excel import parse_tabular
 
@@ -20,8 +23,12 @@ ALLOWED_MIME = {
 PREVIEW_CHARS = 2000
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # 5 MB cap to keep uploads small
 
-@router.post("/upload", response_model=FileInfo)
-async def upload_file(file: UploadFile = File(...)) -> FileInfo:
+
+async def _save_uploaded_file(file: UploadFile) -> tuple[str, Path, str, int]:
+    """
+    Save an uploaded file to disk and return (id, path, mime, size).
+    Shared between the synchronous and async upload endpoints.
+    """
     mime = file.content_type or "application/octet-stream"
     if mime not in ALLOWED_MIME:
         raise HTTPException(status_code=415, detail=f"Unsupported media type: {mime}")
@@ -52,6 +59,12 @@ async def upload_file(file: UploadFile = File(...)) -> FileInfo:
             dest.unlink()
         raise
 
+    return fid, dest, mime, size
+
+@router.post("/upload", response_model=FileInfo)
+async def upload_file(file: UploadFile = File(...)) -> FileInfo:
+    fid, dest, mime, size = await _save_uploaded_file(file)
+
     # Decide which parser to use
     preview: str | None = None
     try:
@@ -73,6 +86,39 @@ async def upload_file(file: UploadFile = File(...)) -> FileInfo:
     )
     FILES[fid] = sf
     return FileInfo(**sf.__dict__)
+
+
+@router.post("/upload-async", response_model=JobInfo)
+async def upload_file_async(file: UploadFile = File(...)) -> JobInfo:
+    """
+    Upload a file and start background parsing via Celery.
+
+    Returns a light-weight job descriptor that can be polled via /jobs/{id}.
+    """
+    fid, dest, mime, _ = await _save_uploaded_file(file)
+
+    # Choose the appropriate Celery task
+    if mime == "application/pdf":
+        task = celery_app.send_task(
+            "files.parse_pdf_task", args=[str(dest)], kwargs={"char_limit": PREVIEW_CHARS}
+        )
+    else:
+        task = celery_app.send_task(
+            "files.parse_excel_task", args=[str(dest)], kwargs={"char_limit": PREVIEW_CHARS}
+        )
+
+    now = datetime.utcnow()
+    job = Job(id=task.id, file_name=file.filename, mime=mime, created_at=now, updated_at=now, status="PENDING")
+    JOBS[job.id] = job
+
+    return JobInfo(
+        id=job.id,
+        file_name=job.file_name,
+        mime=job.mime,
+        status=job.status,
+        preview=None,
+        error=None,
+    )
 
 @router.get("/{file_id}", response_model=FileInfo)
 def get_file(file_id: str) -> FileInfo:

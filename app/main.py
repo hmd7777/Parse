@@ -8,6 +8,7 @@ from pathlib import Path
 from starlette.requests import Request
 
 from app.api import files as files_api  # reusable upload logic and router
+from app.api import jobs as jobs_api
 from app.models import FILES
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -87,3 +88,4 @@ async def upload_file_view(request: Request, file: UploadFile = File(...)):
 
 # register routes
 app.include_router(files_api.router)
+app.include_router(jobs_api.router)
